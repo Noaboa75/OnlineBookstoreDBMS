@@ -38,3 +38,16 @@ CREATE TABLE IF NOT EXISTS order_items (
   unit_price DECIMAL(10,2),
   total_price DECIMAL(10,2)
 );
+
+CREATE TABLE IF NOT EXISTS authors (
+  author_id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+
+);
+
+--Junction table for books and authors
+CREATE TABLE IF NOT EXISTS book_authors (
+    book_id INTEGER REFERENCES books(book_id),
+    author_id INTEGER REFERENCES authors(author_id),
+    PRIMARY KEY (book_id, author_id)
+);
