@@ -38,20 +38,3 @@ CREATE TABLE IF NOT EXISTS order_items (
   unit_price DECIMAL(10,2),
   total_price DECIMAL(10,2)
 );
-
--- Trigger Function
-CREATE OR REPLACE FUNCTION fetch_book_price()
-RETURNS TRIGGER AS $$
-BEGIN
-  SELECT price INTO NEW.unit_price
-  FROM books
-  WHERE book_id = NEW.book_id;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Trigger
-CREATE TRIGGER calculate_order_item_price
-BEFORE INSERT ON order_items
-FOR EACH ROW
-EXECUTE FUNCTION fetch_book_price();
