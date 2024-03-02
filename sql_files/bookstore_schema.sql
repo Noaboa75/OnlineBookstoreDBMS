@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS books (
     price DECIMAL(10,2),
     stock_quantity INTEGER
 );
+
 CREATE TABLE IF NOT EXISTS customers (
     customer_id SERIAL PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
@@ -21,16 +22,18 @@ CREATE TABLE IF NOT EXISTS customers (
     country VARCHAR(100),
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 CREATE TABLE IF NOT EXISTS orders (
   order_id SERIAL PRIMARY KEY,
   customer_id INTEGER REFERENCES customers(customer_id),
   order_date TIMESTAMP,
-  total_amount DECIMAL(10,2),
+  total_amount DECIMAL(10,2)
 );
+
 CREATE TABLE IF NOT EXISTS order_items (
   order_item_id SERIAL PRIMARY KEY,
   order_id INTEGER REFERENCES orders(order_id),
-  book_id INTEGER REFERENCES books(isbn),
+  book_id VARCHAR(13) REFERENCES books(isbn),
   quantity INTEGER NOT NULL,
   unit_price DECIMAL(10,2),
   total_price DECIMAL(10,2)
@@ -42,7 +45,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   SELECT price INTO NEW.unit_price
   FROM books
-  WHERE book_id = NEW.book_id
+  WHERE book_id = NEW.book_id;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
