@@ -48,25 +48,43 @@ CREATE TABLE IF NOT EXISTS authors (
 -- Decided to go with tags instead of genres since genres can be a tag
 CREATE TABLE IF NOT EXISTS tags (
   tag_id SERIAL PRIMARY KEY,
-  tag_name VARCHAR(255),
+  tag_name VARCHAR(255) UNIQUE,
   tag_description VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS reviews (
   review_id SERIAL PRIMARY KEY,
-  review_text VARCHAR(1000),
+  book_id VARCHAR(13) REFERENCES books(isbn),
+  customer_id INTEGER REFERENCES customers(customer_id),
+  review_text TEXT,
   review_rating INTEGER CHECK (review_rating >= 0 AND review_rating <= 5),
-  reviewer_id INTEGER,
-  book_id VARCHAR(13),
   review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS transactions (
   transaction_id SERIAL PRIMARY KEY,
+  order_id INTEGER REFERENCES orders(order_id),
   payment_method VARCHAR(255),
   payment_amount DECIMAL(10,2),
   transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  order_id INTEGER
+  payment_status VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS addresses (
+  address_id SERIAL PRIMARY KEY,
+  customer_id INTEGER REFERENCES customers(customer_id),
+  street_address VARCHAR(255),
+  city VARCHAR(255),
+  state_name VARCHAR(255),
+  postal_code VARCHAR(255),
+  country VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS inventory (
+  inventory_id SERIAL PRIMARY KEY,
+  book_id VARCHAR(13),
+  quantity INTEGER,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 --Junction table for books and authors
